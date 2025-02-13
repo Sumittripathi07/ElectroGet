@@ -6,15 +6,22 @@ import { CgMenu, CgClose } from "react-icons/cg";
 import { useCartContext } from "../context/cart_context";
 import { Button } from "../styles/Button";
 import { useAuth0 } from "@auth0/auth0-react";
+import {
+  SignInButton,
+  SignedIn,
+  SignedOut,
+  UserButton,
+} from "@clerk/clerk-react";
 
 const Nav = () => {
   const [menuIcon, setMenuIcon] = useState();
   const { total_item } = useCartContext();
-  const { loginWithRedirect, logout, user, isAuthenticated, isLoading } = useAuth0();
+  const { loginWithRedirect, logout, user, isAuthenticated, isLoading } =
+    useAuth0();
 
-  if (isLoading) {
-    return <div>Hold on! Loading...</div>;
-  }
+  // if (isLoading) {
+  //   return <div>Hold on! Loading...</div>;
+  // }
 
   const Nav = styled.nav`
     .navbar-lists {
@@ -178,7 +185,8 @@ const Nav = () => {
             <NavLink
               to="/"
               className="navbar-link "
-              onClick={() => setMenuIcon(false)}>
+              onClick={() => setMenuIcon(false)}
+            >
               Home
             </NavLink>
           </li>
@@ -186,7 +194,8 @@ const Nav = () => {
             <NavLink
               to="/about"
               className="navbar-link "
-              onClick={() => setMenuIcon(false)}>
+              onClick={() => setMenuIcon(false)}
+            >
               About
             </NavLink>
           </li>
@@ -194,7 +203,8 @@ const Nav = () => {
             <NavLink
               to="/products"
               className="navbar-link "
-              onClick={() => setMenuIcon(false)}>
+              onClick={() => setMenuIcon(false)}
+            >
               Products
             </NavLink>
           </li>
@@ -202,26 +212,31 @@ const Nav = () => {
             <NavLink
               to="/contact"
               className="navbar-link "
-              onClick={() => setMenuIcon(false)}>
+              onClick={() => setMenuIcon(false)}
+            >
               Contact
             </NavLink>
           </li>
           <li>
             <NavLink to="/cart" className="navbar-link cart-trolley--link">
               <FiShoppingCart className="cart-trolley" />
-              <span className="cart-total--item"> {total_item} </span>       {/*  displaying total items in our cart in navbar */}
+              <span className="cart-total--item"> {total_item} </span>{" "}
+              {/*  displaying total items in our cart in navbar */}
             </NavLink>
           </li>
-            
-            {/* displaying user name in navbar */}
-            {
-              isAuthenticated && <h2>{user.name}</h2>
-            }
 
-            {/* adding user authentication i.e. login and logout button */}
-            {/* if user is authenticated then display logout button if not then display login button */}
-          {isAuthenticated ? <li><Button onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}>Log out</Button></li> : <li><Button onClick={() => loginWithRedirect()}>Log in</Button>;</li>}
+          {/* displaying user name in navbar */}
+          {/* {isAuthenticated && <h2>{user.name}</h2>} */}
 
+          {/* {isAuthenticated ? <li><Button onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}>Log out</Button></li> : <li><Button onClick={() => loginWithRedirect()}>Log in</Button>;</li>} */}
+          <div className="">
+            <SignedOut>
+              <SignInButton />
+            </SignedOut>
+            <SignedIn>
+              <UserButton showName />
+            </SignedIn>
+          </div>
         </ul>
 
         {/* two button for open and close of menu for responsive design */}

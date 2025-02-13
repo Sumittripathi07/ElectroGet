@@ -4,31 +4,25 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { AppProvider } from "./context/productcontext";
-import { FilterContextProvider } from "./context/filter_context"; 
-import { CartProvider } from "./context/cart_context";  
-import { Auth0Provider } from '@auth0/auth0-react';
+import { FilterContextProvider } from "./context/filter_context";
+import { CartProvider } from "./context/cart_context";
+import { ClerkProvider } from "@clerk/clerk-react";
+// import dotenv from "dotenv";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
-root.render(
-    <Auth0Provider
-    domain="dev-yf27pcqhq5bc2spu.us.auth0.com"
-    clientId="QDNuFz5F4Rxc0f3hlwjgBuaaX0r9xeVk"
-    authorizationParams={{
-      redirect_uri: window.location.origin
-    }}
-  >
-    <AppProvider>
-        <FilterContextProvider>
-            <CartProvider>
-            <App />
-            </CartProvider>
-        </FilterContextProvider>
-    </AppProvider>
-  </Auth0Provider>,
-  );
+// console.log(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
+let PUBLISHABLE_KEY = "pk_test_cXVpY2sta2l3aS0zMS5jbGVyay5hY2NvdW50cy5kZXYk";
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+root.render(
+  <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/">
+    <AppProvider>
+      <FilterContextProvider>
+        <CartProvider>
+          <App />
+        </CartProvider>
+      </FilterContextProvider>
+    </AppProvider>
+  </ClerkProvider>
+);
 reportWebVitals();
