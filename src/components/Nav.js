@@ -16,12 +16,6 @@ import {
 const Nav = () => {
   const [menuIcon, setMenuIcon] = useState();
   const { total_item } = useCartContext();
-  const { loginWithRedirect, logout, user, isAuthenticated, isLoading } =
-    useAuth0();
-
-  // if (isLoading) {
-  //   return <div>Hold on! Loading...</div>;
-  // }
 
   const Nav = styled.nav`
     .navbar-lists {
@@ -177,6 +171,40 @@ const Nav = () => {
     }
   `;
 
+  const ClerkWrapper = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    .clerk-signin-button,
+    .clerk-user-button {
+      font-size: 1.4rem;
+      padding: 0.8rem 1.4rem;
+      background-color: ${({ theme }) => theme.colors.helper};
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: background-color 0.3s linear;
+
+      &:hover {
+        background-color: ${({ theme }) => theme.colors.black};
+      }
+    }
+
+    .clerk-user-button {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      .clerk-user-button-name {
+        font-size: 1.4rem;
+        text-transform: capitalize;
+      }
+    }
+  `;
+
   return (
     <Nav>
       <div className={menuIcon ? "navbar active" : "navbar"}>
@@ -225,18 +253,14 @@ const Nav = () => {
             </NavLink>
           </li>
 
-          {/* displaying user name in navbar */}
-          {/* {isAuthenticated && <h2>{user.name}</h2>} */}
-
-          {/* {isAuthenticated ? <li><Button onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}>Log out</Button></li> : <li><Button onClick={() => loginWithRedirect()}>Log in</Button>;</li>} */}
-          <div className="">
+          <ClerkWrapper>
             <SignedOut>
-              <SignInButton />
+              <SignInButton className="clerk-signin-button" />
             </SignedOut>
             <SignedIn>
-              <UserButton showName />
+              <UserButton showName className="clerk-user-button" />
             </SignedIn>
-          </div>
+          </ClerkWrapper>
         </ul>
 
         {/* two button for open and close of menu for responsive design */}

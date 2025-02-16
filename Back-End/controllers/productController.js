@@ -1,14 +1,6 @@
 const Product = require("../models/Product");
 const axios = require("axios");
 
-// exports.getProducts = async (req, res) => {
-//     try {
-//         const response = await axios.get('https://api.pujakaitem.com/api/products');
-//         res.status(200).json(response.data);
-//     } catch (error) {
-//         res.status(500).json({ message: 'Error fetching from external API', error: error.message });
-//     }
-// };
 exports.getProducts = async (req, res) => {
   try {
     const products = await Product.find();
