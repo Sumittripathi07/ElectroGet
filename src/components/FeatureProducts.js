@@ -5,7 +5,8 @@ import Product from "./Product";
 const FeatureProduct = () => {
   const { isLoading, featureProducts } = useProductContext();
 
-  if (isLoading) {      //if you are fetching data from API then set loading to true 
+  if (isLoading) {
+    //if you are fetching data from API then set loading to true
     return <div>Hang on, we are Loading...</div>;
   }
 
@@ -15,8 +16,9 @@ const FeatureProduct = () => {
         <div className="intro-data">Check Now!</div>
         <div className="common-heading">Top sellers</div>
         <div className="grid grid-three-column">
-          {featureProducts.map((curElem) => {                       //map the data from the API
-            return <Product key={curElem.id} {...curElem} />;       //pass the data to the product component <Product/>
+          {featureProducts.map((curElem) => {
+            //map the data from the API
+            return <Product key={curElem._id} {...curElem} />; //pass the data to the product component <Product/>
           })}
         </div>
       </div>

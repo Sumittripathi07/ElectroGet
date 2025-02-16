@@ -7,23 +7,32 @@ const ListView = ({ products }) => {
   return (
     <Wrapper className="section">
       <div className="container grid">
-        {products.map((curElem) => {                //map through the products array and return the data
-          const { id, name, image, price, description } = curElem;
+        {products.map((curElem) => {
+          //map through the products array and return the data
+          const { _id, name, image, price, description } = curElem;
           return (
-            <div className="card grid grid-two-column">
+            <div className="grid card grid-two-column" key={_id}>
+              {" "}
+              {/*display the card in list view*/}
               <figure>
-                <img src={image} alt={name} />      {/*display the image in list view*/}
+                <img src={image} alt={name} />{" "}
+                {/*display the image in list view*/}
               </figure>
-
-              <div className="card-data">           {/*display the data in list view*/}
+              <div className="card-data">
+                {" "}
+                {/*display the data in list view*/}
                 <h3>{name}</h3>
                 <p>
-                  <FormatPrice price={price} />     {/*display the price in list view*/}
+                  <FormatPrice price={price} />{" "}
+                  {/*display the price in list view*/}
                 </p>
-                <p>{description.slice(0, 90)}...</p>        {/*slice the description according to space and display the description in list view*/}
-
-                <NavLink to={`/singleproduct/${id}`} className="btn-main">      {/*display the read more button in list view*/}
-                  <Button className="btn">Read More</Button>                    {/*display the read more button in list view*/}
+                <p>{description.slice(0, 90)}...</p>{" "}
+                {/*slice the description according to space and display the description in list view*/}
+                <NavLink to={`/singleproduct/${_id}`} className="btn-main">
+                  {" "}
+                  {/*display the read more button in list view*/}
+                  <Button className="btn">Read More</Button>{" "}
+                  {/*display the read more button in list view*/}
                 </NavLink>
               </div>
             </div>

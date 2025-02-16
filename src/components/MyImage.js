@@ -2,33 +2,33 @@ import React, { useState } from "react";
 import styled from "styled-components";
 
 const MyImage = ({ imgs = [{ url: "" }] }) => {
-  const [mainImage, setMainImage] = useState(imgs[0]);      //We use useState to set the image from the api dynamically
+  const [mainImage, setMainImage] = useState(imgs[0]); //We use useState to set the image from the api dynamically
 
   return (
     // Now we divide the images in two columns
-    //1st columnn consists of 4 images 
+    //1st columnn consists of 4 images
     <Wrapper>
-      <div className="grid grid-four-column">         
+      <div className="grid grid-four-column">
         {imgs.map((curElm, index) => {
           return (
-            <figure>
+            <figure key={index}>
               <img
-                src={curElm.url}                               //This is the url of the image
-                alt={curElm.filename}                         //This is the name of the image
+                src={curElm.url} //This is the url of the image
+                alt={curElm.filename} //This is the name of the image
                 className="box-image--style"
-                key={index}                                  //This is the key of the image
-                onClick={() => setMainImage(curElm)}        //This is the function that helps us change the main image when we click on the image
+                key={index} //This is the key of the image
+                onClick={() => setMainImage(curElm)} //This is the function that helps us change the main image when we click on the image
               />
             </figure>
           );
         })}
       </div>
 
-
       {/* 2nd column  */}
 
-      <div className="main-screen">                             
-        <img src={mainImage.url} alt={mainImage.filename} />    {/*This is the main image*/}
+      <div className="main-screen">
+        <img src={mainImage.url} alt={mainImage.filename} />{" "}
+        {/*This is the main image*/}
       </div>
     </Wrapper>
   );

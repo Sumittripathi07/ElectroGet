@@ -11,30 +11,32 @@ import { TbTruckDelivery, TbReplace } from "react-icons/tb";
 import Star from "./components/Star";
 import AddToCart from "./components/AddToCart";
 
-const API = "https://api.pujakaitem.com/api/products";
+const API = "http://localhost:9000/api/products";
 
 const SingleProduct = () => {
-  const { getSingleProduct, isSingleLoading, singleProduct } = useProductContext();
-  
+  const { getSingleProduct, isSingleLoading, singleProduct } =
+    useProductContext();
+
   const { id } = useParams();
 
   const {
-    id:      //alias
     name,
     company,
     price,
     description,
-    //category,
-    stock,
+    category,
     stars,
     reviews,
     image,
+    colors,
+    featured,
+    shipping,
+    stock,
   } = singleProduct;
 
   useEffect(() => {
-    getSingleProduct(`${API}?id=${id}`);
-  }, []);
-
+    getSingleProduct(`${API}/${id}`);
+  }, [id]);
 
   if (isSingleLoading) {
     return <div className="page_loading">Hold on! we are Loading...</div>;
@@ -45,28 +47,31 @@ const SingleProduct = () => {
       <PageNavigation title={name} />
       <Container className="container">
         <div className="grid grid-two-column">
-          {/* product Images  */}
-          <div className="product_images">
-            <MyImage imgs={image} />
+          <div className="grid grid-four-column">
+            <figure>
+              <img
+                src={image} //This is the url of the image
+                className="box-image--style"
+              />
+            </figure>
           </div>
 
-          {/* product data  */}
           <div className="product-data">
             <h2>{name}</h2>
-            <Star stars={stars} reviews={reviews} />                        {/*This is the name of the product*/}                    {/*This is the number of reviews of the product*/}
+            <Star stars={stars} reviews={reviews} />
             <p className="product-data-price">
-              MRP:                        
-              <del>                                       {/*This is the price of the product before discount*/}
-                <FormatPrice price={price + 250000} />   
+              MRP:
+              <del>
+                <FormatPrice price={price + (price * 20) / 100} />
               </del>
             </p>
             <p className="product-data-price product-data-real-price">
               Deal of the Day: <FormatPrice price={price} />
             </p>
-            <p>{description}</p>                          {/*This is the description of the product*/}
+            <p>{description}</p>
             <div className="product-data-warranty">
               <div className="product-warranty-data">
-                <TbTruckDelivery className="warranty-icon" />       {/*Below four are icons for the product*/}
+                <TbTruckDelivery className="warranty-icon" />
                 <p>Free Delivery</p>
               </div>
 
@@ -77,29 +82,53 @@ const SingleProduct = () => {
 
               <div className="product-warranty-data">
                 <TbTruckDelivery className="warranty-icon" />
-                <p>Thapa Delivered </p>
+                <p>Thapa Delivered</p>
               </div>
 
               <div className="product-warranty-data">
                 <MdSecurity className="warranty-icon" />
-                <p>2 Year Warranty </p>
+                <p>2 Year Warranty</p>
               </div>
             </div>
-
-            <div className="product-data-info">           {/*This tells if the product is available or not if stock>0 then yes it is present else not*/}
-              <p>
+            <div className="product-data-info">
+              {/* <p>
                 Available:
                 <span> {stock > 0 ? "In Stock" : "Not Available"}</span>
-              </p>
+              </p> */}
               <p>
                 ID : <span> {id} </span>
               </p>
               <p>
                 Brand :<span> {company} </span>
               </p>
+              <p>
+                Category :<span> {category} </span>
+              </p>
+              <p>
+                Featured :<span> {featured ? "Yes" : "No"} </span>
+              </p>
+              <p>
+                Shipping :
+                <span> {shipping ? "Available" : "Not Available"} </span>
+              </p>
+              <p>
+                Colors :
+                {colors &&
+                  colors.map((color, index) => (
+                    <span
+                      key={index}
+                      style={{
+                        backgroundColor: color,
+                        padding: "0.5rem",
+                        margin: "0.2rem",
+                        borderRadius: "50%",
+                      }}
+                    ></span>
+                  ))}
+              </p>
             </div>
             <hr />
-            {stock > 0 && < AddToCart product={singleProduct}/> }        
+            {stock > 0 && <AddToCart product={singleProduct} />}
           </div>
         </div>
       </Container>
@@ -117,7 +146,7 @@ const Wrapper = styled.section`
     align-items: center;
   }
 
-  h2{
+  h2 {
     color: ${({ theme }) => theme.colors.btn};
     text-transform: capitalize;
   }
@@ -175,7 +204,6 @@ const Wrapper = styled.section`
     hr {
       max-width: 100%;
       width: 90%;
-      /* height: 0.2rem; */
       border: 0.1rem solid #000;
       color: red;
     }
@@ -185,6 +213,12 @@ const Wrapper = styled.section`
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+
+  .box-image--style {
+    width: 300px; /* Set the fixed width */
+    height: 300px; /* Set the fixed height */
+    object-fit: cover; /* Ensure the image covers the box */
   }
 
   .page_loading {

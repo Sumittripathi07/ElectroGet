@@ -3,13 +3,17 @@ import { NavLink } from "react-router-dom";
 import FormatPrice from "../Helpers/FormatPrice";
 
 const Product = (curElem) => {
-  const { id, name, image, price, category } = curElem;     // Destructuring the props i.e. curElem
+  const { _id, name, image, price, category } = curElem; // Destructuring the props i.e. curElem
+
   return (
-    <NavLink to={`/singleproduct/${id}`}>             {/*This is our single product component and NavLink take us to that single product page with it's id*/}
+    <NavLink to={`/singleproduct/${_id}`}>
+      {" "}
+      {/*This is our single product component and NavLink take us to that single product page with it's id*/}
       <div className="card">
         <figure>
           <img src={image} alt={name} />
-          <figcaption className="caption">{category}</figcaption>       {/*Displaying the category of the product in caption of card*/}
+          <figcaption className="caption">{category}</figcaption>{" "}
+          {/*Displaying the category of the product in caption of card*/}
         </figure>
 
         <div className="card-data">

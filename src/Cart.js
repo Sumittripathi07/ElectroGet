@@ -5,36 +5,125 @@ import { NavLink } from "react-router-dom";
 import { Button } from "./styles/Button";
 import FormatPrice from "./Helpers/FormatPrice";
 import { useAuth0 } from "@auth0/auth0-react";
+import { useState } from "react";
 
 const Cart = () => {
   const { cart, clearCart, total_price, shipping_fee } = useCartContext();
-  //console.log("🚀 ~ file: Cart.js ~ line 6 ~ Cart ~ cart", cart);
+  const { isAuthenticated, user } = useAuth0();
+  const [address, setAddress] = useState({
+    name: "",
+    flatNumber: "",
+    landmark: "",
+    state: "",
+    district: "",
+    pincode: "",
+  });
 
-  const{ isAuthenticated, user } = useAuth0();
-  
-  if (cart.length === 0) {        //when your cart is empty return "NO ITEMS IN CART"
+  const handleAddressChange = (e) => {
+    const { name, value } = e.target;
+    setAddress((prevAddress) => ({
+      ...prevAddress,
+      [name]: value,
+    }));
+  };
+
+  // const handelCheckout = (e) => {
+  //   e.preventDefault();
+  //   console.log(address);
+  // };
+
+  // async function handelCheckout(e) {
+  //   e.preventDefault();
+  //   console.log(address);
+
+  //   const AMOUNT = shipping_fee + total_price;
+  //   try {
+  //     console.log("01");
+
+  //     const response = await fetch("/api/razorpayCheckout", {
+  //       headers: { "Content-Type": "application/json" },
+  //       method: "POST",
+  //       body: JSON.stringify({ total: total }),
+  //     });
+  //     const data = await response.json();
+  //     console.log("02");
+
+  //     const options = {
+  //       key: process.env.RAZORPAY_KEY_ID,
+  //       amount: AMOUNT * 100,
+  //       currency: "INR",
+  //       name: "Eyeware Ecommerce",
+  //       description: "Test",
+  //       order_id: data.orderId,
+  //       handler: async function (res) {
+  //         console.log("Payment Successful", res);
+  //         setPaymentDetail(res);
+
+  //         const response = await axios.post("/api/checkout", {
+  //           name,
+  //           email,
+  //           address,
+  //           country,
+  //           zip,
+  //           city,
+  //           cartProducts,
+  //         });
+
+  //         if (response) {
+  //           // window.location = response.data.url
+  //           toast.success("Order placed successfully");
+  //           setIsSuccess(true);
+  //           clearCart();
+  //         } else {
+  //           toast.error("An error occured!!");
+  //         }
+  //       },
+  //       prefill: {
+  //         name: "SUMIT TRIPATHI",
+  //         email: "sumit@gmail.com",
+  //         contact: "999999999",
+  //       },
+  //       theme: {
+  //         color: "#3399c",
+  //       },
+  //     };
+
+  //     const rzp1 = new window.Razorpay(options);
+  //     rzp1.open();
+  //   } catch (error) {
+  //     console.error("Payment Faield", error);
+  //   } finally {
+  //     setIsProcessing(false);
+  //   }
+  // }
+
+  if (cart.length === 0) {
+    //when your cart is empty return "NO ITEMS IN CART"
     return (
       <EmptyDiv>
-         <h3>Oops! No item in cart </h3>
-        <img className="empty-cart" src="images/empty-cart.png" alt="empty-cart"/>
+        <h3>Oops! No item in cart </h3>
+        <img
+          className="empty-cart"
+          src="images/empty-cart.png"
+          alt="empty-cart"
+        />
         <Button>
           <NavLink to="/products">continue Shopping</NavLink>
         </Button>
       </EmptyDiv>
     );
   }
-  
-  
+
   return (
     <Wrapper>
       <div className="container">
         {isAuthenticated && (
           <div className="cart-user--profile">
-            <img src={user.profile} alt={user.name}/>
+            <img src={user.profile} alt={user.name} />
             <h2 className="cart-user--name">{user.name}</h2>
           </div>
         )}
-        <div className="cart_heading grid grid-five-column">
+        <div className="grid cart_heading grid-five-column">
           <p>Item</p>
           <p className="cart-hide">Price</p>
           <p>Quantity</p>
@@ -55,37 +144,109 @@ const Cart = () => {
           <NavLink to="/products">
             <Button> continue Shopping </Button>
           </NavLink>
-          <Button className="btn btn-checkout">
-            <NavLink to="/checkout">Checkout</NavLink>
-          </Button>
 
           <Button className="btn btn-clear" onClick={clearCart}>
             clear cart
           </Button>
         </div>
 
-         {/* order total_amount  */}
+        {/* order total_amount  */}
         <div className="order-total--amount">
           <div className="order-total--subdata">
             <div>
               <p>subtotal:</p>
               <p>
-                <FormatPrice price={total_price} />         {/* display subtotal of all the products in cart */}
+                <FormatPrice price={total_price} />{" "}
+                {/* display subtotal of all the products in cart */}
               </p>
             </div>
             <div>
               <p>shipping fee:</p>
               <p>
-                <FormatPrice price={shipping_fee} />      {/* display shipping fee of all the products in cart */}
+                <FormatPrice price={shipping_fee} />{" "}
+                {/* display shipping fee of all the products in cart */}
               </p>
             </div>
             <hr />
             <div>
               <p>order total:</p>
               <p>
-                <FormatPrice price={shipping_fee + total_price} />          {/* display total price of all the products in cart */}
+                <FormatPrice price={shipping_fee + total_price} />{" "}
+                {/* display total price of all the products in cart */}
               </p>
             </div>
+            <form>
+              <div>
+                <p>Name:</p>
+                <input
+                  type="text"
+                  name="name"
+                  value={address.name}
+                  onChange={handleAddressChange}
+                  placeholder="Enter your name"
+                  className="address-input"
+                />
+              </div>
+              <div>
+                <p>Flat Number:</p>
+                <input
+                  type="text"
+                  name="flatNumber"
+                  value={address.flatNumber}
+                  onChange={handleAddressChange}
+                  placeholder="Enter your flat number"
+                  className="address-input"
+                />
+              </div>
+              <div>
+                <p>Landmark:</p>
+                <input
+                  type="text"
+                  name="landmark"
+                  value={address.landmark}
+                  onChange={handleAddressChange}
+                  placeholder="Enter landmark"
+                  className="address-input"
+                />
+              </div>
+              <div>
+                <p>State:</p>
+                <input
+                  type="text"
+                  name="state"
+                  value={address.state}
+                  onChange={handleAddressChange}
+                  placeholder="Enter your state"
+                  className="address-input"
+                />
+              </div>
+              <div>
+                <p>District:</p>
+                <input
+                  type="text"
+                  name="district"
+                  value={address.district}
+                  onChange={handleAddressChange}
+                  placeholder="Enter your district"
+                  className="address-input"
+                />
+              </div>
+              <div>
+                <p>Pincode:</p>
+                <input
+                  type="text"
+                  name="pincode"
+                  value={address.pincode}
+                  onChange={handleAddressChange}
+                  placeholder="Enter your pincode"
+                  className="address-input"
+                />
+              </div>
+              <Button className="btn btn-checkout" type="submit">
+                {/* <NavLink to="/checkout">Checkout</NavLink> */}
+                Checkout
+              </Button>
+            </form>
           </div>
         </div>
       </div>
@@ -112,7 +273,6 @@ const Wrapper = styled.section`
   .grid-four-column {
     grid-template-columns: repeat(4, 1fr);
   }
-
 
   .grid-five-column {
     grid-template-columns: repeat(4, 1fr) 0.3fr;
@@ -255,6 +415,15 @@ const Wrapper = styled.section`
       font-weight: bold;
       color: ${({ theme }) => theme.colors.heading};
     }
+  }
+
+  .address-input {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f0f8ff; /* Light blue background */
+    color: #000; /* Black text */
   }
 
   @media (max-width: ${({ theme }) => theme.media.mobile}) {

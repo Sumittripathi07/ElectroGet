@@ -9,7 +9,7 @@ import { useCartContext } from "../context/cart_context";
 const AddToCart = ({ product }) => {
   const { addToCart } = useCartContext();
 
-  const { id, colors, stock } = product;
+  const { _id, colors, stock } = product;
 
   const [color, setColor] = useState(colors[0]);
   const [amount, setAmount] = useState(1);
@@ -33,7 +33,8 @@ const AddToCart = ({ product }) => {
                 key={index}
                 style={{ backgroundColor: curColor }}
                 className={color === curColor ? "btnStyle active" : "btnStyle"}
-                onClick={() => setColor(curColor)}>
+                onClick={() => setColor(curColor)}
+              >
                 {color === curColor ? <FaCheck className="checkStyle" /> : null}
               </button>
             );
@@ -48,7 +49,10 @@ const AddToCart = ({ product }) => {
         setIncrease={setIncrease}
       />
 
-      <NavLink to="/cart" onClick={() => addToCart(id, color, amount, product)}>
+      <NavLink
+        to="/cart"
+        onClick={() => addToCart(_id, color, amount, product)}
+      >
         <Button className="btn">Add To Cart</Button>
       </NavLink>
     </Wrapper>

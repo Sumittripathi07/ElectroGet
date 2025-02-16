@@ -2,18 +2,19 @@ import { FaStar, FaStarHalfAlt } from "react-icons/fa";
 import { AiOutlineStar } from "react-icons/ai";
 import styled from "styled-components";
 
-
 //IF YOU DON'T UNDERSTOOD WATCH THIS VIDEO: https://www.youtube.com/watch?v=KvEEmZ5ThC4&list=PLwGdqUZWnOp0f3nfgWGbk3_fe8hoMIYpA&index=22
 // FROM THAPA TIME: 14:52
 const Star = ({ stars, reviews }) => {
   const ratingStar = Array.from({ length: 5 }, (elem, index) => {
-    let number = index + 0.5;           //We use this to get the half star
-    debugger;                                   //i=0, i=1, i=2, i=3, i=4 [0-based indexing of 5 elements]
+    let number = index + 0.5; //We use this to get the half star
+    // debugger;                                   //i=0, i=1, i=2, i=3, i=4 [0-based indexing of 5 elements]
     return (
-      <span key={index}>                        {/*This is the star component*/}
-        {stars >= index + 1 ? (                  //If the stars score is greater than the index of array then we show the full star
+      <span key={index}>
+        {" "}
+        {/*This is the star component*/}
+        {stars >= index + 1 ? ( //If the stars score is greater than the index of array then we show the full star
           <FaStar className="icon" />
-        ) : stars >= number ? (                   //If the stars are greater than the number then we show the half star
+        ) : stars >= number ? ( //If the stars are greater than the number then we show the half star
           <FaStarHalfAlt className="icon" />
         ) : (
           <AiOutlineStar className="icon" />
