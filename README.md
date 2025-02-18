@@ -1,6 +1,6 @@
-# Gearlogy - Your Electronic Gadgets E-commerce Website
+# ElectroGet - Your Electronic Gadgets E-commerce Website
 
-Welcome to Gearlogy, your ultimate destination for electronic gadgets! This e-commerce website is built using React.js, JavaScript, CSS, and HTML, offering a seamless shopping experience for tech enthusiasts.
+Welcome to ElectroGet, your ultimate destination for electronic gadgets! This e-commerce website is built using React.js, JavaScript, CSS, and HTML, offering a seamless shopping experience for tech enthusiasts.
 
 ## Features
 
@@ -19,9 +19,8 @@ Welcome to Gearlogy, your ultimate destination for electronic gadgets! This e-co
 - **Secure Checkout Process**: Shop with confidence using our secure and seamless checkout process.
 
 - **Stay Updated**: Stay up-to-date with the latest tech trends and gadget releases.
-- 
+-
 - **Wide Range of Electronic Gadgets**: Explore a diverse catalog of electronic devices and accessories, all at your fingertips.
-
 
 # Getting Started with Create React App
 
@@ -94,5 +93,4 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
 
-
-Thank you for choosing Gearlogy for your electronic gadget shopping needs! Happy shopping! 
+Thank you for choosing ElectroGet for your electronic gadget shopping needs! Happy shopping!

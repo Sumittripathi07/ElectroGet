@@ -6,10 +6,15 @@ import { Button } from "./styles/Button";
 import FormatPrice from "./Helpers/FormatPrice";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useState } from "react";
+import { useUser } from "@clerk/clerk-react";
 
 const Cart = () => {
   const { cart, clearCart, total_price, shipping_fee } = useCartContext();
-  const { isAuthenticated, user } = useAuth0();
+  const { isSignedIn, user, isLoaded } = useUser();
+  console.log("ISSIGN", isSignedIn);
+  console.log("USER", user);
+
+  // const { isAuthenticated, user } = useAuth0();
   const [address, setAddress] = useState({
     name: "",
     flatNumber: "",
@@ -117,10 +122,13 @@ const Cart = () => {
   return (
     <Wrapper>
       <div className="container">
-        {isAuthenticated && (
+        {isSignedIn && (
           <div className="cart-user--profile">
-            <img src={user.profile} alt={user.name} />
-            <h2 className="cart-user--name">{user.name}</h2>
+            <img src={user.imageUrl} alt={user.firstName} />
+            <h2 className="cart-user--name">
+              {user.firstName}&nbsp;
+              {user.lastName}
+            </h2>
           </div>
         )}
         <div className="grid cart_heading grid-five-column">

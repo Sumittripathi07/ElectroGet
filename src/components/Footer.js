@@ -1,67 +1,75 @@
-import React from 'react'
-import styled from 'styled-components'
-import { NavLink } from 'react-router-dom'
-import { Button } from '../styles/Button'
-import { FaFacebook, FaInstagram, FaLinkedin, FaTwitter } from 'react-icons/fa'
+import React from "react";
+import styled from "styled-components";
+import { NavLink } from "react-router-dom";
+import { Button } from "../styles/Button";
+import { FaFacebook, FaInstagram, FaLinkedin, FaTwitter } from "react-icons/fa";
 
 const Footer = () => {
   return (
     <>
-    <Wrapper>
-        <section className='contact-short'>
-            <div className='grid grid-two-column'>
-                <div>
-                    <h3>Get in touch</h3>
-                    <p>Feel free to contact us anytime.</p>
-                </div>
-                <div>
-                    <Button>
-                        <NavLink to="/contact">
-                            Contact Us
-                        </NavLink>
-                    </Button>
-                </div> 
+      <Wrapper>
+        <section className="contact-short">
+          <div className="grid grid-two-column">
+            <div>
+              <h3>Get in touch</h3>
+              <p>Feel free to contact us anytime.</p>
             </div>
+            <div>
+              <Button>
+                <NavLink to="/contact">Contact Us</NavLink>
+              </Button>
+            </div>
+          </div>
         </section>
 
-    {/*Main Footer*/}
-    <footer>
-        {/*About us column of footer*/}
-        <div className='container grid grid-five-column-footer'>
-            <div className='footer-about'>
-                <h3>About Us</h3>
-                <p>We believe that technology should be a seamless part of your life.</p>
-                <NavLink to="/about">
-                    <input className='footer-btn' type='submit' value="Read More"/>
-                </NavLink>
+        {/*Main Footer*/}
+        <footer>
+          {/*About us column of footer*/}
+          <div className="container grid grid-five-column-footer">
+            <div className="footer-about">
+              <h3>About Us</h3>
+              <p>
+                We believe that technology should be a seamless part of your
+                life.
+              </p>
+              <NavLink to="/about">
+                <input className="footer-btn" type="submit" value="Read More" />
+              </NavLink>
             </div>
 
             {/*Subsribe us column of footer*/}
-            <div className='footer-subscribe'>
-                <h3>Subscribe to get important updates</h3>
-                <form>
-                    <input type='email' placeholder='Email address' />
-                    <input className='footer-btn' type='submit' value="Subscribe" />
-                </form>
+            <div className="footer-subscribe">
+              <h3>Subscribe to get important updates</h3>
+              <form>
+                <input type="email" placeholder="Email address" />
+                <input className="footer-btn" type="submit" value="Subscribe" />
+              </form>
             </div>
 
             {/*Quick Links column of footer*/}
-            <div className='footer-quick-links'>
-                <h3>Quick Links</h3>
-                <ul>
-                    <li><NavLink to='/'>Home</NavLink></li>
-                    <li><NavLink to='/about'>About</NavLink></li>
-                    <li><NavLink to='/products'>Products</NavLink></li>
-                    <li><NavLink to='/contact'>Contact</NavLink></li>
-                </ul>
+            <div className="footer-quick-links">
+              <h3>Quick Links</h3>
+              <ul>
+                <li>
+                  <NavLink to="/">Home</NavLink>
+                </li>
+                <li>
+                  <NavLink to="/about">About</NavLink>
+                </li>
+                <li>
+                  <NavLink to="/products">Products</NavLink>
+                </li>
+                <li>
+                  <NavLink to="/contact">Contact</NavLink>
+                </li>
+              </ul>
             </div>
 
             {/*Social Media column of footer*/}
-            <div className='footer-social'>
-                <h3>Social Media</h3>
-                <div className='footer-social--icons'>
-
-                    {/*Add <a> tag here to make the icon links work eg.
+            <div className="footer-social">
+              <h3>Social Media</h3>
+              <div className="footer-social--icons">
+                {/*Add <a> tag here to make the icon links work eg.
                         <div>
                         <a href='https://www.instagram.com/' target='_blank'>
                         <FaInstagram className='icons' />
@@ -69,58 +77,68 @@ const Footer = () => {
                     
                     */}
 
-                    <div>
-                        <FaInstagram className='icons' />
-                    </div>
-                    <div>
-                        <FaTwitter className='icons' />
-                    </div>
-                    <div>
-                        <FaLinkedin className='icons' />
-                    </div>
-                    <div>
-                        <FaFacebook className='icons' />
-                    </div>
+                <div>
+                  <FaInstagram className="icons" />
                 </div>
+                <div>
+                  <FaTwitter className="icons" />
+                </div>
+                <div>
+                  <FaLinkedin className="icons" />
+                </div>
+                <div>
+                  <FaFacebook className="icons" />
+                </div>
+              </div>
             </div>
 
-            <div className='footer-contact'>
-                <h3>Call Us</h3>
-                <div>
-                <a href='tel:+911234567890'>Phone: +91 1234567890</a>
-                </div>
-                <br></br> 
-                <div>
-                <a href='mailto: gearlogy@gmail.com'>Email: gearlogy@gmail.com</a>
-                </div>
+            <div className="footer-contact">
+              <h3>Call Us</h3>
+              <div>
+                <a href="tel:+911234567890">Phone: +91 1234567890</a>
+              </div>
+              <br></br>
+              <div>
+                <a href="mailto: ElectroGet@gmail.com">
+                  Email: ElectroGet@gmail.com
+                </a>
+              </div>
             </div>
-        </div>
+          </div>
 
-
-        <br></br><br></br><br></br><br></br>
-        <div className="footer-bottom--section">
+          <br></br>
+          <br></br>
+          <br></br>
+          <br></br>
+          <div className="footer-bottom--section">
             <hr />
             <div className="container grid grid-three-column ">
-
-              <p className='bottom-footer-text'>
-                @{new Date().getFullYear()} Gearlogy. All Rights Reserved
-                </p>
-                <div>
-                <p>Designed by: <a className='bottom-footer-text' href='https://www.linkedin.com/in/garv-chouhan-3462401b3/'>GARV CHOUHAN</a> </p>
-              </div>
-             
+              <p className="bottom-footer-text">
+                @{new Date().getFullYear()} ElectroGet. All Rights Reserved
+              </p>
               <div>
-                <p className='bottom-footer-text'>Privacy Policy</p>
-                <p className='bottom-footer-text'>Terms & Conditions</p>
+                <p>
+                  Designed by:{" "}
+                  <a
+                    className="bottom-footer-text"
+                    href="https://www.linkedin.com/in/garv-chouhan-3462401b3/"
+                  >
+                    GARV CHOUHAN
+                  </a>{" "}
+                </p>
               </div>
 
+              <div>
+                <p className="bottom-footer-text">Privacy Policy</p>
+                <p className="bottom-footer-text">Terms & Conditions</p>
+              </div>
             </div>
           </div>
         </footer>
-    </Wrapper>
-</>
-)
-}
+      </Wrapper>
+    </>
+  );
+};
 
 const Wrapper = styled.section`
 .iSIFGq {
@@ -250,4 +268,4 @@ const Wrapper = styled.section`
   }
 `;
 
-export default Footer
+export default Footer;

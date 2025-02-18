@@ -4,7 +4,7 @@ import reducer from "../reducer/cartReducer";
 const CartContext = createContext();
 
 const getLocalCartData = () => {
-  let localCartData = localStorage.getItem("gearlogyCart");
+  let localCartData = localStorage.getItem("ElectroGetCart");
   //  if (localCartData === []) {         //if no product is added return empty data
   //    return [];
   //  } else {                          //if products are added then return the data added to the cart
@@ -53,7 +53,7 @@ const CartProvider = ({ children }) => {
   useEffect(() => {
     dispatch({ type: "CART_TOTAL_ITEM" }); //to get the total item in cart
     dispatch({ type: "CART_TOTAL_PRICE" }); //to get the total price of all the products in cart
-    localStorage.setItem("gearlogyCart", JSON.stringify(state.cart)); //set the data in local storage//JSON.stringify() converts a JavaScript object or value to a JSON string
+    localStorage.setItem("ElectroGetCart", JSON.stringify(state.cart)); //set the data in local storage//JSON.stringify() converts a JavaScript object or value to a JSON string
   }, [state.cart]);
 
   return (

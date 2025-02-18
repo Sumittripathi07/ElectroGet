@@ -1,46 +1,43 @@
-import React from 'react';
+import React from "react";
 //import { useContext } from 'react';
-import HeroSection from './components/HeroSection';
+import HeroSection from "./components/HeroSection";
 //import { AppContext } from './context/productcontext';
-import styled from 'styled-components';
-import { NavLink } from 'react-router-dom';
-import { Button } from './styles/Button';
-
+import styled from "styled-components";
+import { NavLink } from "react-router-dom";
+import { Button } from "./styles/Button";
 
 const About = () => {
-
   //const myName = useContext(AppContext);
-  
+
   // Here we are passing data to our HeroSection component using props
   const data = {
-    name: "Gearlogy Electronics",
-    description: `Explore a curated collection of the latest electronics at Gearlogy. From sleek smartphones that keep you connected, to smart home solutions for modern living, we offer top-tier gadgets that blend technology with style.
+    name: "ElectroGet Electronics",
+    description: `Explore a curated collection of the latest electronics at ElectroGet. From sleek smartphones that keep you connected, to smart home solutions for modern living, we offer top-tier gadgets that blend technology with style.
     
     Discover high-definition TVs, sleek smartphones, durable smart watches, immersive audio gear, and accessories that match your personality. Our commitment to quality ensures durable products that accompany you on every journey. 
     
-    Quality is key – our products promise durability for every adventure. With a user-friendly interface and dedicated support team, Gearlogy is more than shopping – it's a tech-savvy lifestyle. Embrace innovation with us and elevate your electronics game today`
-};
-
+    Quality is key – our products promise durability for every adventure. With a user-friendly interface and dedicated support team, ElectroGet is more than shopping – it's a tech-savvy lifestyle. Embrace innovation with us and elevate your electronics game today`,
+  };
 
   return (
     <>
       {/*myName*/}
-      <HeroSection  myData={data}/>
+      <HeroSection myData={data} />
       <Wrapper>
-        <div className='container'>
-            <div className="grid grid-two-column">
-               {/* Our homepage hero image*/}
-               <div className='hero-sectiion-image'>
-                    <figure>
-                        <img
-                            src="images/themanbehind.jpg"
-                            alt="themanbehind"
-                            className="img-style"
-                        />
-                    </figure>
-                </div>
+        <div className="container">
+          <div className="grid grid-two-column">
+            {/* Our homepage hero image*/}
+            {/* <div className="hero-sectiion-image">
+              <figure>
+                <img
+                  src="images/themanbehind.jpg"
+                  alt="themanbehind"
+                  className="img-style"
+                />
+              </figure>
+            </div> */}
 
-                <div className='hero-section-data'>
+            {/* <div className='hero-section-data'>
                     <p className='intro-data'>Meet the Developer</p>
                     <h1>Garv Chouhan</h1>
                     <div>
@@ -53,15 +50,15 @@ const About = () => {
                     <NavLink to="https://garv-chouhan.netlify.app/">
                         <Button>Portfolio</Button>
                     </NavLink>
-                </div>
-            </div>
+                </div> */}
+          </div>
         </div>
-    </Wrapper>
+      </Wrapper>
     </>
-  )
-}
+  );
+};
 const Wrapper = styled.section`
-padding: 12rem 0;
+  padding: 12rem 0;
 
   .container {
     background-color: ${({ theme }) => theme.colors.background};
@@ -73,7 +70,6 @@ padding: 12rem 0;
     border-radius: 8%;
     border: 3px solid ${({ theme }) => theme.colors.border};
   }
-  
 
   span {
     color: ${({ theme }) => theme.colors.btn};
@@ -112,7 +108,7 @@ padding: 12rem 0;
       content: "";
       width: 60%;
       height: 80%;
-      background-color:  ${({ theme }) => theme.colors.btn};
+      background-color: ${({ theme }) => theme.colors.btn};
       position: absolute;
       right: 50%;
       border-radius: 10%;
@@ -142,5 +138,4 @@ padding: 12rem 0;
   }
 `;
 
-
-export default About
+export default About;
