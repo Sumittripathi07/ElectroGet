@@ -1,44 +1,49 @@
-import React from 'react'
-import styled from 'styled-components'
-import { NavLink } from 'react-router-dom'
-import { Button } from '../styles/Button'
+import React from "react";
+import styled from "styled-components";
+import { NavLink } from "react-router-dom";
+import { Button } from "../styles/Button";
 
 //we used dynamic data from props i.e. myData this is diffret in Home and About page but we used same component i.e. HeroSection
 const HeroSection = ({ myData }) => {
-    const { name, description } = myData
+  const { name, description } = myData;
   return (
     <Wrapper>
-        <div className='container'>
-            <div className="grid grid-two-column">
-                <div className='hero-section-data'>
-                    <p className='intro-data'>Welcome to</p>
-                    <h1>{name}</h1>
-                    <div>
-                        {description.split('\n\n').map((description, index) => (        //here we are splitting our description data from props
-                            <p key={index}>{description}</p>
-                         ))}
-                    </div>
-                    <NavLink to="/products">
-                        <Button>Shop Now</Button>
-                    </NavLink>
-                </div>
-                {/* Our homepage hero image*/}
-                <div className='hero-section-image'>
-                    <figure>
-                        <img
-                            src="images/main-hero.jpg"
-                            alt="hero-section"
-                            className="img-style"
-                        />
-                    </figure>
-                </div>
+      <div className="container">
+        <div className="grid grid-two-column">
+          <div className="hero-section-data">
+            <p className="intro-data">Welcome to</p>
+            <h1>{name}</h1>
+            <div>
+              {description.split("\n\n").map(
+                (
+                  description,
+                  index //here we are splitting our description data from props
+                ) => (
+                  <p key={index}>{description}</p>
+                )
+              )}
             </div>
+            <NavLink to="/products">
+              <Button>Shop Now</Button>
+            </NavLink>
+          </div>
+          {/* Our homepage hero image*/}
+          <div className="hero-section-image">
+            <figure>
+              <img
+                src="images/main-hero.jpg"
+                alt="hero-section"
+                className="img-style"
+              />
+            </figure>
+          </div>
         </div>
+      </div>
     </Wrapper>
-  )
-}
+  );
+};
 const Wrapper = styled.section`
-padding: 12rem 0;
+  padding: 12rem 0;
 
   img {
     min-width: 10rem;
@@ -105,4 +110,4 @@ padding: 12rem 0;
   }
 `;
 
-export default HeroSection
+export default HeroSection;

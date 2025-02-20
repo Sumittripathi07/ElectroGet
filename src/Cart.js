@@ -152,6 +152,9 @@ const Cart = () => {
           <NavLink to="/products">
             <Button> continue Shopping </Button>
           </NavLink>
+          <NavLink to="/checkout">
+            <Button className="btn btn-checkout">Checkout</Button>
+          </NavLink>
 
           <Button className="btn btn-clear" onClick={clearCart}>
             clear cart
@@ -183,78 +186,6 @@ const Cart = () => {
                 {/* display total price of all the products in cart */}
               </p>
             </div>
-            <form>
-              <div>
-                <p>Name:</p>
-                <input
-                  type="text"
-                  name="name"
-                  value={address.name}
-                  onChange={handleAddressChange}
-                  placeholder="Enter your name"
-                  className="address-input"
-                />
-              </div>
-              <div>
-                <p>Flat Number:</p>
-                <input
-                  type="text"
-                  name="flatNumber"
-                  value={address.flatNumber}
-                  onChange={handleAddressChange}
-                  placeholder="Enter your flat number"
-                  className="address-input"
-                />
-              </div>
-              <div>
-                <p>Landmark:</p>
-                <input
-                  type="text"
-                  name="landmark"
-                  value={address.landmark}
-                  onChange={handleAddressChange}
-                  placeholder="Enter landmark"
-                  className="address-input"
-                />
-              </div>
-              <div>
-                <p>State:</p>
-                <input
-                  type="text"
-                  name="state"
-                  value={address.state}
-                  onChange={handleAddressChange}
-                  placeholder="Enter your state"
-                  className="address-input"
-                />
-              </div>
-              <div>
-                <p>District:</p>
-                <input
-                  type="text"
-                  name="district"
-                  value={address.district}
-                  onChange={handleAddressChange}
-                  placeholder="Enter your district"
-                  className="address-input"
-                />
-              </div>
-              <div>
-                <p>Pincode:</p>
-                <input
-                  type="text"
-                  name="pincode"
-                  value={address.pincode}
-                  onChange={handleAddressChange}
-                  placeholder="Enter your pincode"
-                  className="address-input"
-                />
-              </div>
-              <Button className="btn btn-checkout" type="submit">
-                {/* <NavLink to="/checkout">Checkout</NavLink> */}
-                Checkout
-              </Button>
-            </form>
           </div>
         </div>
       </div>
