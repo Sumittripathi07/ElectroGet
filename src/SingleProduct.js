@@ -112,6 +112,9 @@ const SingleProduct = () => {
                 <span> {shipping ? "Available" : "Not Available"} </span>
               </p>
               <p>
+                Quantity left :<span> {stock} </span>
+              </p>
+              <p>
                 Colors :
                 {colors &&
                   colors.map((color, index) => (
