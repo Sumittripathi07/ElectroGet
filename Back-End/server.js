@@ -1,8 +1,8 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const connectDB = require("./db/connection");
-const productRoutes = require("./routes/productRoutes");
-const razorpay = require("./routes/razorpayCheckout");
+const productRoutes = require("./routes/productRoutes.js");
+const razorpayRoutes = require("./routes/razorpayRoutes.js");
 const cors = require("cors");
 
 dotenv.config();
@@ -15,7 +15,7 @@ app.use(cors());
 connectDB();
 
 app.use("/api/products", productRoutes);
-app.use("/api/razorpayCheckout", razorpay);
+app.use("/api/razorpay", razorpayRoutes);
 
 const PORT = process.env.PORT || 9000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
