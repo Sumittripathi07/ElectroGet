@@ -11,8 +11,6 @@ import { useUser } from "@clerk/clerk-react";
 const Cart = () => {
   const { cart, clearCart, total_price, shipping_fee } = useCartContext();
   const { isSignedIn, user, isLoaded } = useUser();
-  console.log("ISSIGN", isSignedIn);
-  console.log("USER", user);
 
   // const { isAuthenticated, user } = useAuth0();
   const [address, setAddress] = useState({

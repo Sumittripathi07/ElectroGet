@@ -20,7 +20,8 @@ root.render(
     afterSignOutUrl="/"
     appearance={{
       variables: {
-        fontSize: "16px",
+        fontSize: "14px",
+        // width: "150%",
       },
     }}
   >

@@ -121,9 +121,10 @@ const Footer = () => {
                   Designed by:{" "}
                   <a
                     className="bottom-footer-text"
-                    href="https://www.linkedin.com/in/garv-chouhan-3462401b3/"
+                    href="https://www.linkedin.com/in/sumittripathi07/"
+                    target="_blank"
                   >
-                    GARV CHOUHAN
+                    SUMIT TRIPATHI
                   </a>{" "}
                 </p>
               </div>

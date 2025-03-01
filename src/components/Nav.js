@@ -256,7 +256,10 @@ const Nav = () => {
           <li>
             <ClerkWrapper className="flex items-center gap-4 navbar-link">
               <SignedOut>
-                <SignInButton className="clerk-signin-button text-lg py-2 px-4 bg-helper text-white rounded cursor-pointer uppercase transition duration-300 hover:bg-black" />
+                <SignInButton
+                  // mode="modal"
+                  className="clerk-signin-button text-lg py-2 px-4 bg-helper text-white rounded cursor-pointer uppercase transition duration-300 hover:bg-black"
+                />
               </SignedOut>
               <SignedIn>
                 <UserButton
