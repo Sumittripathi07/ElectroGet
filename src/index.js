@@ -11,11 +11,19 @@ import { ClerkProvider } from "@clerk/clerk-react";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
-// console.log(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
-let PUBLISHABLE_KEY = "pk_test_cXVpY2sta2l3aS0zMS5jbGVyay5hY2NvdW50cy5kZXYk";
+let PUBLISHABLE_KEY =
+  "pk_test_cm9tYW50aWMtZmxlYS04OC5jbGVyay5hY2NvdW50cy5kZXYk";
 
 root.render(
-  <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/">
+  <ClerkProvider
+    publishableKey={PUBLISHABLE_KEY}
+    afterSignOutUrl="/"
+    appearance={{
+      variables: {
+        fontSize: "16px",
+      },
+    }}
+  >
     <AppProvider>
       <FilterContextProvider>
         <CartProvider>
