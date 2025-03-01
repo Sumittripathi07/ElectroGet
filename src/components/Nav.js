@@ -239,7 +239,7 @@ const Nav = () => {
           <li>
             <NavLink
               to="/contact"
-              className="navbar-link "
+              className="navbar-link"
               onClick={() => setMenuIcon(false)}
             >
               Contact
@@ -253,14 +253,19 @@ const Nav = () => {
             </NavLink>
           </li>
 
-          <ClerkWrapper>
-            <SignedOut>
-              <SignInButton className="clerk-signin-button" />
-            </SignedOut>
-            <SignedIn>
-              <UserButton showName className="clerk-user-button" />
-            </SignedIn>
-          </ClerkWrapper>
+          <li>
+            <ClerkWrapper className="flex items-center gap-4 navbar-link">
+              <SignedOut>
+                <SignInButton className="clerk-signin-button text-lg py-2 px-4 bg-helper text-white rounded cursor-pointer uppercase transition duration-300 hover:bg-black" />
+              </SignedOut>
+              <SignedIn>
+                <UserButton
+                  showName
+                  className="clerk-user-button flex items-center gap-2 text-xl p-10 bg-helper text-white rounded cursor-pointer uppercase transition duration-300 hover:bg-black"
+                />
+              </SignedIn>
+            </ClerkWrapper>
+          </li>
         </ul>
 
         {/* two button for open and close of menu for responsive design */}
