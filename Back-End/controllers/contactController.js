@@ -52,4 +52,13 @@ const sendContactEmail = async (req, res) => {
   }
 };
 
-module.exports = { sendContactEmail };
+const getAllContacts = async (req, res) => {
+  try {
+    const contacts = await Contact.find();
+    res.status(200).json(contacts);
+  } catch (error) {
+    res.status(500).send("Failed to retrieve contacts: " + error.toString());
+  }
+};
+
+module.exports = { sendContactEmail, getAllContacts };
