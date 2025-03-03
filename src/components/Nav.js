@@ -4,8 +4,8 @@ import styled from "styled-components";
 import { FiShoppingCart } from "react-icons/fi";
 import { CgMenu, CgClose } from "react-icons/cg";
 import { useCartContext } from "../context/cart_context";
-import { Button } from "../styles/Button";
-import { useAuth0 } from "@auth0/auth0-react";
+// import { Button } from "../styles/Button";
+// import { useAuth0 } from "@auth0/auth0-react";
 import {
   SignInButton,
   SignedIn,
