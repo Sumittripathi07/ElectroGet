@@ -4,8 +4,7 @@ import { FaCheck } from "react-icons/fa";
 import FormatPrice from "../Helpers/FormatPrice";
 import { Button } from "../styles/Button";
 
-
-const FilterSection = () => {         //using useFilterContext to get all the data from filter_context
+const FilterSection = () => {
   const {
     filters: { text, category, color, price, maxPrice, minPrice },
     updateFilterValue,
@@ -13,74 +12,67 @@ const FilterSection = () => {         //using useFilterContext to get all the da
     clearFilters,
   } = useFilterContext();
 
-  // get the unique values of each property
-  const getUniqueData = (data, attr) => {         //function to get unique data from all products based on category, company and colors
+  const getUniqueData = (data, attr) => {
     let newVal = data.map((curElem) => {
-      return curElem[attr];
+      const value = curElem[attr];
+      return typeof value === "string" ? value.toLowerCase() : value;
     });
 
-    if (attr === "colors") {            //handing the colors array explicitly, where we need to flatten the array and then get the unique values of colours from the array
-      // return (newVal = ["All", ...new Set([].concat(...newVal))]);
-      newVal = newVal.flat();         //flat() method concatenates sub-array elements
+    if (attr === "colors") {
+      newVal = newVal.flat();
     }
 
-    return (newVal = ["all", ...new Set(newVal)]);      //using Set() method i.e. set data structure that returns unique values from the array
+    return (newVal = ["all", ...new Set(newVal)]);
   };
 
-  // we need to have the individual data of each in an array format
-  const categoryData = getUniqueData(all_products, "category");           //getting unique data from all products based on category
-  const companyData = getUniqueData(all_products, "company");             //getting unique data from all products based on company
-  const colorsData = getUniqueData(all_products, "colors");               //getting unique data from all products based on colors
-  // console.log(
-  //   "🚀 ~ file: FilterSection.js ~ line 23 ~ FilterSection ~ companyData",
-  //   colorsData
-  // );
+  const categoryData = getUniqueData(all_products, "category");
+  const companyData = getUniqueData(all_products, "company");
+  const colorsData = getUniqueData(all_products, "colors");
 
   return (
     <Wrapper>
       <div className="filter-search">
-        <form onSubmit={(e) => e.preventDefault()}>     {/*preventing the default behaviour of form*/}
+        <form onSubmit={(e) => e.preventDefault()}>
           <input
             type="text"
             name="text"
-            placeholder="Search"        //MAKING OUR SEARCH BAR FOR FILTER SECTION
+            placeholder="Search"
             value={text}
             onChange={updateFilterValue}
           />
         </form>
       </div>
 
-      <div className="filter-category">  
+      <div className="filter-category">
         <h3>Category</h3>
-        <div>                                        {/*MAKING OUR CATEGORY SECTION*/}
-          {categoryData.map((curElem, index) => {
-            return (
-              <button                     //running map loop to print all the element sof categoryData array
-                key={index}
-                type="button"
-                name="category"
-                value={curElem}
-                className={curElem === category ? "active" : ""}
-                onClick={updateFilterValue}>
-                {curElem}
-              </button>
-            );
-          })}
-        </div>
+        <form action="#">
+          <select
+            name="category"
+            id="category"
+            className="filter-category--select"
+            onChange={updateFilterValue}
+          >
+            {categoryData.map((curElem, index) => {
+              return (
+                <option key={index} value={curElem} name="category">
+                  {curElem}
+                </option>
+              );
+            })}
+          </select>
+        </form>
       </div>
 
-
-        {/*Making company wise filter using form or drop down menu*/}
       <div className="filter-company">
         <h3>Company</h3>
-
         <form action="#">
           <select
             name="company"
             id="company"
             className="filter-company--select"
-            onClick={updateFilterValue}>
-            {companyData.map((curElem, index) => {         //running map loop to print all the elements of companyData array
+            onChange={updateFilterValue}
+          >
+            {companyData.map((curElem, index) => {
               return (
                 <option key={index} value={curElem} name="company">
                   {curElem}
@@ -91,10 +83,8 @@ const FilterSection = () => {         //using useFilterContext to get all the da
         </form>
       </div>
 
-        {/*Making color wise filter using form or drop down menu*/}
-        <div className="filter-colors colors">
+      <div className="filter-colors colors">
         <h3>Colors</h3>
-
         <div className="filter-color-style">
           {colorsData.map((curColor, index) => {
             if (curColor === "all") {
@@ -105,22 +95,30 @@ const FilterSection = () => {         //using useFilterContext to get all the da
                   value={curColor}
                   name="color"
                   className="color-all--style"
-                  onClick={updateFilterValue}>
+                  onClick={updateFilterValue}
+                >
                   all
                 </button>
               );
             }
             return (
-              <button               //running map loop to print all the elements of colorsData array
-                key={index}
-                type="button"
-                value={curColor}
-                name="color"
-                style={{ backgroundColor: curColor }}
-                className={color === curColor ? "btnStyle active" : "btnStyle"}         //if color is equal to curColor then add active class else not
-                onClick={updateFilterValue}>
-                {color === curColor ? <FaCheck className="checkStyle" /> : null}        {/*if color is equal to curColor then add check mark else not*/}
-              </button>
+              <div className="tooltip" key={index}>
+                <button
+                  type="button"
+                  value={curColor}
+                  name="color"
+                  style={{ backgroundColor: curColor }}
+                  className={
+                    color === curColor ? "btnStyle active" : "btnStyle"
+                  }
+                  onClick={updateFilterValue}
+                >
+                  {color === curColor ? (
+                    <FaCheck className="checkStyle" />
+                  ) : null}
+                </button>
+                <span className="tooltiptext">{curColor}</span>
+              </div>
             );
           })}
         </div>
@@ -129,10 +127,9 @@ const FilterSection = () => {         //using useFilterContext to get all the da
       <div className="filter_price">
         <h3>Price</h3>
         <p>
-          <FormatPrice price={price} />     {/*using FormatPrice helper function to format the price i.e covert 60lakh to 60thousand*/}
+          <FormatPrice price={price} />
         </p>
-        {/*making price range slider*/}
-        <input                              
+        <input
           type="range"
           name="price"
           min={minPrice}
@@ -146,7 +143,7 @@ const FilterSection = () => {         //using useFilterContext to get all the da
         <Button className="btn" onClick={clearFilters}>
           Clear Filters
         </Button>
-        </div>
+      </div>
     </Wrapper>
   );
 };
@@ -169,31 +166,7 @@ const Wrapper = styled.section`
     }
   }
 
-  .filter-category {
-    div {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 1.4rem;
-
-      button {
-        border: none;
-        background-color: ${({ theme }) => theme.colors.white};
-        text-transform: capitalize;
-        cursor: pointer;
-
-        &:hover {
-          color: ${({ theme }) => theme.colors.btn};
-        }
-      }
-
-      .active {
-        border-bottom: 1px solid rgb(98, 84, 243);
-        color: ${({ theme }) => theme.colors.btn};
-      }
-    }
-  }
-
+  .filter-category--select,
   .filter-company--select {
     padding: 0.3rem 1.2rem;
     font-size: 1.6rem;
@@ -202,8 +175,9 @@ const Wrapper = styled.section`
   }
 
   .filter-color-style {
-    display: flex;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 0.5rem;
   }
 
   .color-all--style {
@@ -212,6 +186,7 @@ const Wrapper = styled.section`
     border: none;
     cursor: pointer;
   }
+
   .btnStyle {
     width: 2rem;
     height: 2rem;
@@ -255,6 +230,33 @@ const Wrapper = styled.section`
   .filter-clear .btn {
     background-color: #ec7063;
     color: #fff;
+  }
+
+  .tooltip {
+    position: relative;
+    display: inline-block;
+  }
+
+  .tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%; /* Position the tooltip above the button */
+    left: 50%;
+    margin-left: -60px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
   }
 `;
 
