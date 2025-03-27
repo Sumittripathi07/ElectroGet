@@ -1,10 +1,6 @@
 const mongoose = require('mongoose');
 
 const contactSchema = new mongoose.Schema({
-  username: {
-    type: String,
-    required: true,
-  },
   email: {
     type: String,
     required: true,
@@ -16,6 +12,10 @@ const contactSchema = new mongoose.Schema({
   message: {
     type: String,
     required: true,
+  },
+  isResolved: {
+    type: Boolean,
+    default: false,
   },
   createdAt: {
     type: Date,

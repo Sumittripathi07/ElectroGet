@@ -60,4 +60,21 @@ router.post("/verify-payment", async (req, res) => {
   }
 });
 
+// Get orders by user email
+router.get("/user-orders/:email", async (req, res) => {
+  try {
+    const { email } = req.params;
+    
+    if (!email) {
+      return res.status(400).json({ error: "Email is required" });
+    }
+    
+    const orders = await Order.find({ email }).sort({ createdAt: -1 });
+    
+    res.json(orders);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 module.exports = router;

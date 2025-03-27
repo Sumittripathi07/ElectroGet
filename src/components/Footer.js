@@ -1,10 +1,39 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { NavLink } from "react-router-dom";
 import { Button } from "../styles/Button";
 import { FaFacebook, FaInstagram, FaLinkedin, FaTwitter } from "react-icons/fa";
 
 const Footer = () => {
+  const [subscribeEmail, setSubscribeEmail] = useState("");
+  const [subscribeError, setSubscribeError] = useState("");
+  const [subscribeSuccess, setSubscribeSuccess] = useState(false);
+
+  const handleSubscribeChange = (e) => {
+    setSubscribeEmail(e.target.value);
+    setSubscribeError("");
+    setSubscribeSuccess(false);
+  };
+
+  const handleSubscribeSubmit = (e) => {
+    e.preventDefault();
+    
+    // Email validation
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!subscribeEmail.trim()) {
+      setSubscribeError("Email is required");
+      return;
+    } else if (!emailRegex.test(subscribeEmail)) {
+      setSubscribeError("Please enter a valid email");
+      return;
+    }
+
+    // Here you would typically handle the subscription logic
+    // For now, we'll just show a success message
+    setSubscribeSuccess(true);
+    setSubscribeEmail("");
+  };
+
   return (
     <>
       <Wrapper>
@@ -40,9 +69,23 @@ const Footer = () => {
             {/*Subsribe us column of footer*/}
             <div className="footer-subscribe">
               <h3>Subscribe to get important updates</h3>
-              <form>
-                <input type="email" placeholder="Email address" />
-                <input className="footer-btn" type="submit" value="Subscribe" />
+              <form onSubmit={handleSubscribeSubmit}>
+                <div className="subscribe-input-container">
+                  <input 
+                    type="email" 
+                    placeholder="Email address" 
+                    value={subscribeEmail}
+                    onChange={handleSubscribeChange}
+                    className={subscribeError ? "error" : ""}
+                  />
+                  {subscribeError && <div className="error-message">{subscribeError}</div>}
+                  {subscribeSuccess && <div className="success-message">Thank you for subscribing!</div>}
+                </div>
+                <input 
+                  className="footer-btn" 
+                  type="submit" 
+                  value="Subscribe" 
+                />
               </form>
             </div>
 
@@ -76,7 +119,6 @@ const Footer = () => {
                         </div>
                     
                     */}
-
                 <div>
                   <FaInstagram className="icons" />
                 </div>
@@ -91,7 +133,6 @@ const Footer = () => {
                 </div>
               </div>
             </div>
-
             <div className="footer-contact">
               <h3>Call Us</h3>
               <div>
@@ -105,7 +146,6 @@ const Footer = () => {
               </div>
             </div>
           </div>
-
           <br></br>
           <br></br>
           <br></br>
@@ -123,6 +163,7 @@ const Footer = () => {
                     className="bottom-footer-text"
                     href="https://www.linkedin.com/in/sumittripathi07/"
                     target="_blank"
+                    rel="noreferrer"
                   >
                     SUMIT TRIPATHI
                   </a>{" "}
@@ -142,7 +183,7 @@ const Footer = () => {
 };
 
 const Wrapper = styled.section`
-.iSIFGq {
+  .iSIFGq {
     margin: 0;
   }
 
@@ -150,11 +191,45 @@ const Wrapper = styled.section`
     border-radius: 0.7rem;
     &:hover,
     &:active {
-    box-shadow: 0 2rem 2rem 0 rgb(132 144 255 / 30%);
-    box-shadow: ${({ theme }) => theme.colors.shadowSupport};
-    transform: scale(0.96);
+      box-shadow: 0 2rem 2rem 0 rgb(132 144 255 / 30%);
+      box-shadow: ${({ theme }) => theme.colors.shadowSupport};
+      transform: scale(0.96);
+    }
   }
-}
+
+  .footer-subscribe {
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .subscribe-input-container {
+      position: relative;
+      
+      input {
+        width: 100%;
+      }
+      
+      input.error {
+        border: 1px solid #e74c3c;
+      }
+      
+      .error-message {
+        color: #e74c3c;
+        font-size: 1.2rem;
+        margin-top: 0.5rem;
+        text-align: left;
+      }
+      
+      .success-message {
+        color: #2ecc71;
+        font-size: 1.2rem;
+        margin-top: 0.5rem;
+        text-align: left;
+      }
+    }
+  }
 
   .bottom-footer-text{
     font-size: 2rem;
@@ -235,6 +310,8 @@ const Wrapper = styled.section`
                     color: ${({ theme }) => theme.colors.btn};
                 }
             }
+        }
+    }
   }
 
   .footer-bottom--section {

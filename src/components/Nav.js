@@ -3,6 +3,7 @@ import { NavLink } from "react-router-dom";
 import styled from "styled-components";
 import { FiShoppingCart } from "react-icons/fi";
 import { CgMenu, CgClose } from "react-icons/cg";
+import { FaUser } from "react-icons/fa";
 import { useCartContext } from "../context/cart_context";
 // import { Button } from "../styles/Button";
 // import { useAuth0 } from "@auth0/auth0-react";
@@ -245,6 +246,19 @@ const Nav = () => {
               Contact
             </NavLink>
           </li>
+          
+          <SignedIn>
+            <li>
+              <NavLink
+                to="/profile"
+                className="navbar-link"
+                onClick={() => setMenuIcon(false)}
+              >
+                <FaUser className="profile-icon" />
+              </NavLink>
+            </li>
+          </SignedIn>
+
           <li>
             <NavLink to="/cart" className="navbar-link cart-trolley--link">
               <FiShoppingCart className="cart-trolley" />
@@ -252,7 +266,6 @@ const Nav = () => {
               {/*  displaying total items in our cart in navbar */}
             </NavLink>
           </li>
-
           <li>
             <ClerkWrapper className="flex items-center gap-4 navbar-link">
               <SignedOut>
@@ -264,13 +277,12 @@ const Nav = () => {
               <SignedIn>
                 <UserButton
                   showName
-                  className="clerk-user-button flex items-center gap-2 text-xl p-10 bg-helper text-white rounded cursor-pointer uppercase transition duration-300 hover:bg-black"
+                  className="clerk-user-button navbar-link flex items-center gap-2 text-xl p-10 bg-helper text-white rounded cursor-pointer uppercase transition duration-300 hover:bg-black"
                 />
               </SignedIn>
             </ClerkWrapper>
           </li>
         </ul>
-
         {/* two button for open and close of menu for responsive design */}
         <div className="mobile-navbar-btn">
           <CgMenu

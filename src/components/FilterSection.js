@@ -1,6 +1,7 @@
+import React, { useState, useEffect, useCallback } from "react";
 import styled from "styled-components";
 import { useFilterContext } from "../context/filter_context";
-import { FaCheck } from "react-icons/fa";
+import { FaCheck, FaSearch } from "react-icons/fa";
 import FormatPrice from "../Helpers/FormatPrice";
 import { Button } from "../styles/Button";
 
@@ -11,6 +12,51 @@ const FilterSection = () => {
     all_products,
     clearFilters,
   } = useFilterContext();
+
+  const [searchInput, setSearchInput] = useState(text);
+  const [isSearching, setIsSearching] = useState(false);
+
+  // Debounce search input to improve performance
+  const debounce = (func, delay) => {
+    let timer;
+    return function (...args) {
+      const context = this;
+      setIsSearching(true);
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        func.apply(context, args);
+        setIsSearching(false);
+      }, delay);
+    };
+  };
+
+  // Create debounced search function
+  const debouncedUpdateFilter = useCallback(
+    debounce((value) => {
+      const event = { 
+        target: { 
+          name: "text", 
+          value 
+        } 
+      };
+      updateFilterValue(event);
+    }, 400),
+    [updateFilterValue]
+  );
+
+  // Handle search input change
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setSearchInput(value);
+    debouncedUpdateFilter(value);
+  };
+
+  // Reset search input when filters are cleared
+  useEffect(() => {
+    if (text === "") {
+      setSearchInput("");
+    }
+  }, [text]);
 
   const getUniqueData = (data, attr) => {
     let newVal = data.map((curElem) => {
@@ -33,13 +79,38 @@ const FilterSection = () => {
     <Wrapper>
       <div className="filter-search">
         <form onSubmit={(e) => e.preventDefault()}>
-          <input
-            type="text"
-            name="text"
-            placeholder="Search"
-            value={text}
-            onChange={updateFilterValue}
-          />
+          <div className="search-container">
+            <div className="search-icon">
+              <FaSearch />
+            </div>
+            <input
+              type="text"
+              name="text"
+              placeholder="Search products..."
+              value={searchInput}
+              onChange={handleSearchChange}
+              aria-label="Search products"
+            />
+            {isSearching && <div className="search-spinner"></div>}
+          </div>
+          {searchInput && (
+            <button 
+              className="clear-search" 
+              onClick={() => {
+                setSearchInput("");
+                const event = { 
+                  target: { 
+                    name: "text", 
+                    value: "" 
+                  } 
+                };
+                updateFilterValue(event);
+              }}
+              aria-label="Clear search"
+            >
+              ×
+            </button>
+          )}
         </form>
       </div>
 
@@ -51,6 +122,8 @@ const FilterSection = () => {
             id="category"
             className="filter-category--select"
             onChange={updateFilterValue}
+            value={category}
+            aria-label="Filter by category"
           >
             {categoryData.map((curElem, index) => {
               return (
@@ -71,6 +144,8 @@ const FilterSection = () => {
             id="company"
             className="filter-company--select"
             onChange={updateFilterValue}
+            value={category === "all" ? "all" : undefined}
+            aria-label="Filter by company"
           >
             {companyData.map((curElem, index) => {
               return (
@@ -85,7 +160,7 @@ const FilterSection = () => {
 
       <div className="filter-colors colors">
         <h3>Colors</h3>
-        <div className="filter-color-style">
+        <div className="filter-color-style" role="group" aria-label="Filter by color">
           {colorsData.map((curColor, index) => {
             if (curColor === "all") {
               return (
@@ -96,6 +171,7 @@ const FilterSection = () => {
                   name="color"
                   className="color-all--style"
                   onClick={updateFilterValue}
+                  aria-pressed={color === "all"}
                 >
                   all
                 </button>
@@ -108,14 +184,12 @@ const FilterSection = () => {
                   value={curColor}
                   name="color"
                   style={{ backgroundColor: curColor }}
-                  className={
-                    color === curColor ? "btnStyle active" : "btnStyle"
-                  }
+                  className={color === curColor ? "btnStyle active" : "btnStyle"}
                   onClick={updateFilterValue}
+                  aria-label={`Select ${curColor} color`}
+                  aria-pressed={color === curColor}
                 >
-                  {color === curColor ? (
-                    <FaCheck className="checkStyle" />
-                  ) : null}
+                  {color === curColor ? <FaCheck className="checkStyle" /> : null}
                 </button>
                 <span className="tooltiptext">{curColor}</span>
               </div>
@@ -136,7 +210,12 @@ const FilterSection = () => {
           max={maxPrice}
           value={price}
           onChange={updateFilterValue}
+          aria-label="Filter by price"
         />
+        <div className="price-range">
+          <span><FormatPrice price={minPrice} /></span>
+          <span><FormatPrice price={maxPrice} /></span>
+        </div>
       </div>
 
       <div className="filter-clear">
@@ -155,23 +234,104 @@ const Wrapper = styled.section`
   gap: 3rem;
 
   h3 {
-    padding: 2rem 0;
-    font-size: bold;
+    padding: 2rem 0 1rem 0;
+    font-weight: bold;
   }
 
   .filter-search {
-    input {
-      padding: 0.6rem 1rem;
-      width: 80%;
+    position: relative;
+
+    form {
+      position: relative;
+      display: flex;
+      align-items: center;
     }
+
+    .search-container {
+      position: relative;
+      width: 100%;
+      display: flex;
+      align-items: center;
+    }
+
+    input {
+      padding: 0.8rem 1rem 0.8rem 3rem;
+      width: 100%;
+      border-radius: 5px;
+      border: 1px solid #e2e8f0;
+      transition: all 0.3s ease;
+
+      &:focus, &:hover {
+        border-color: ${({ theme }) => theme.colors.btn};
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(98, 84, 243, 0.2);
+      }
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 1rem;
+      color: #718096;
+    }
+
+    .search-spinner {
+      position: absolute;
+      right: 1rem;
+      width: 15px;
+      height: 15px;
+      border: 2px solid rgba(98, 84, 243, 0.3);
+      border-top-color: ${({ theme }) => theme.colors.btn};
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .clear-search {
+      position: absolute;
+      right: 0.5rem;
+      background: none;
+      border: none;
+      font-size: 2rem;
+      color: #718096;
+      cursor: pointer;
+      padding: 0.2rem 0.7rem;
+      line-height: 1;
+      border-radius: 50%;
+
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+      }
+    }
+  }
+
+  .price-range {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.5rem;
+    font-size: 1.2rem;
+    color: ${({ theme }) => theme.colors.text};
   }
 
   .filter-category--select,
   .filter-company--select {
-    padding: 0.3rem 1.2rem;
+    padding: 0.8rem 1.2rem;
+    width: 100%;
     font-size: 1.6rem;
     color: ${({ theme }) => theme.colors.text};
     text-transform: capitalize;
+    border: 1px solid #e2e8f0;
+    border-radius: 5px;
+    
+    &:focus, &:hover {
+      border-color: ${({ theme }) => theme.colors.btn};
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(98, 84, 243, 0.2);
+    }
   }
 
   .filter-color-style {
@@ -183,32 +343,41 @@ const Wrapper = styled.section`
   .color-all--style {
     background-color: transparent;
     text-transform: capitalize;
-    border: none;
+    border: 1px solid #e2e8f0;
+    border-radius: 3px;
+    padding: 0.2rem 0.5rem;
     cursor: pointer;
+    
+    &:hover {
+      background-color: #f7fafc;
+    }
   }
 
   .btnStyle {
-    width: 2rem;
-    height: 2rem;
+    width: 2.4rem;
+    height: 2.4rem;
     background-color: #000;
     border-radius: 50%;
-    margin-left: 1rem;
+    margin-left: 0.5rem;
     border: none;
     outline: none;
     opacity: 0.5;
     cursor: pointer;
-
+    transition: all 0.3s ease;
+    
     &:hover {
-      opacity: 1;
+      opacity: 0.85;
+      transform: scale(1.1);
     }
   }
 
   .active {
     opacity: 1;
+    box-shadow: 0 0 0 2px white, 0 0 0 4px ${({ theme }) => theme.colors.btn};
   }
 
   .checkStyle {
-    font-size: 1rem;
+    font-size: 1.2rem;
     color: #fff;
   }
 
@@ -218,6 +387,8 @@ const Wrapper = styled.section`
       padding: 0;
       box-shadow: none;
       cursor: pointer;
+      width: 100%;
+      accent-color: ${({ theme }) => theme.colors.btn};
     }
   }
 
@@ -228,8 +399,14 @@ const Wrapper = styled.section`
   }
 
   .filter-clear .btn {
-    background-color: #ec7063;
+    background-color: #e74c3c;
     color: #fff;
+    padding: 0.8rem 1.5rem;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      background-color: #c0392b;
+    }
   }
 
   .tooltip {
@@ -239,24 +416,26 @@ const Wrapper = styled.section`
 
   .tooltip .tooltiptext {
     visibility: hidden;
-    width: 120px;
-    background-color: black;
+    width: 80px;
+    background-color: #1a202c;
     color: #fff;
     text-align: center;
     border-radius: 6px;
     padding: 5px 0;
     position: absolute;
     z-index: 1;
-    bottom: 125%; /* Position the tooltip above the button */
+    bottom: 125%;
     left: 50%;
-    margin-left: -60px;
+    margin-left: -40px;
     opacity: 0;
     transition: opacity 0.3s;
+    font-size: 1.2rem;
+    text-transform: capitalize;
   }
 
   .tooltip:hover .tooltiptext {
     visibility: visible;
-    opacity: 1;
+    opacity: 0.9;
   }
 `;
 

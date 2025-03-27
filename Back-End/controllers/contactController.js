@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const Contact = require("../models/Contact");
 
 const sendContactEmail = async (req, res) => {
-  const { username, email, phone, message } = req.body;
+  const { email, phone, message } = req.body;
 
   const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
@@ -15,11 +15,9 @@ const sendContactEmail = async (req, res) => {
     },
   });
 
-
   try {
     // Save contact form submission to the database
     const newContact = new Contact({
-      username,
       email,
       phone,
       message,
@@ -28,10 +26,10 @@ const sendContactEmail = async (req, res) => {
 
     // **1st Email: Notify Your Company**
     const companyMailOptions = {
-      from: `"${username}" <${process.env.EMAIL_USER}>`, // Display sender's name but use your email
+      from: `"Contact Form" <${process.env.EMAIL_USER}>`, // Use a generic sender name
       to: process.env.EMAIL_USER,  // Send to your email
       subject: "New Contact Form Submission",
-      text: `Name: ${username}\nEmail: ${email}\nPhone: ${phone}\nMessage: ${message}`,
+      text: `Email: ${email}\nPhone: ${phone}\nMessage: ${message}`,
     };
 
     // **2nd Email: Thank You Email to the User**
@@ -39,7 +37,7 @@ const sendContactEmail = async (req, res) => {
       from: `"Electroget" <${process.env.EMAIL_USER}>`, // Company email
       to: email, // Send to user's email
       subject: "Thank You for Contacting Us",
-      text: `Hi ${username},\n\nThank you for reaching out! We have received your message and will get back to you soon.\n\nBest regards,\nElectroget`,
+      text: `Thank you for reaching out! We have received your message and will get back to you soon.\n\nBest regards,\nElectroget`,
     };
 
     // Send both emails
@@ -61,4 +59,56 @@ const getAllContacts = async (req, res) => {
   }
 };
 
-module.exports = { sendContactEmail, getAllContacts };
+// New function to update the resolution status of a contact query
+const updateResolutionStatus = async (req, res) => {
+  const { id } = req.params;
+  const { isResolved } = req.body;
+  
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ message: "Invalid contact ID format" });
+  }
+
+  try {
+    const updatedContact = await Contact.findByIdAndUpdate(
+      id,
+      { isResolved },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedContact) {
+      return res.status(404).json({ message: "Contact query not found" });
+    }
+
+    res.status(200).json(updatedContact);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to update contact query", error: error.toString() });
+  }
+};
+
+// New function to get contact query by ID
+const getContactById = async (req, res) => {
+  const { id } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ message: "Invalid contact ID format" });
+  }
+
+  try {
+    const contact = await Contact.findById(id);
+    
+    if (!contact) {
+      return res.status(404).json({ message: "Contact query not found" });
+    }
+    
+    res.status(200).json(contact);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch contact query", error: error.toString() });
+  }
+};
+
+module.exports = { 
+  sendContactEmail, 
+  getAllContacts,
+  updateResolutionStatus,
+  getContactById
+};

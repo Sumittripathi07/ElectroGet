@@ -9,6 +9,11 @@ const OrderSchema = new mongoose.Schema(
     address: String,
     paid: Boolean,
     total_price: Number,
+    status: {
+      type: String,
+      enum: ['processing', 'shipped', 'delivered', 'cancelled'],
+      default: 'processing'
+    },
   },
   {
     timestamps: true,

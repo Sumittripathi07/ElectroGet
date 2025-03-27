@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useCartContext } from "./context/cart_context";
 import { useUser, SignInButton } from "@clerk/clerk-react";
 import axios from "axios";
@@ -12,23 +12,101 @@ const CheckoutPage = () => {
   const [fullName, setFullName] = useState("");
   const [billingAddress, setBillingAddress] = useState("");
   const [billingZip, setBillingZip] = useState("");
+  console.log("USer", user);
+  
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [errors, setErrors] = useState({
+    email: "",
+    fullName: "",
+    billingAddress: "",
+    billingZip: ""
+  });
   const navigate = useNavigate();
 
+  // Pre-fill with user data if available
+  useEffect(() => {
+    if (isSignedIn && user) {
+      setEmail(user.primaryEmailAddress?.emailAddress || "");
+      setFullName(`${user.firstName || ""} ${user.lastName || ""}`.trim());
+    }
+  }, [isSignedIn, user]);
+
+  const validateForm = () => {
+    let isValid = true;
+    const newErrors = {
+      email: "",
+      fullName: "",
+      billingAddress: "",
+      billingZip: ""
+    };
+
+    // Email validation
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!email.trim()) {
+      newErrors.email = "Email address is required";
+      isValid = false;
+    } else if (!emailRegex.test(email)) {
+      newErrors.email = "Please enter a valid email address";
+      isValid = false;
+    }
+
+    // Full Name validation
+    if (!fullName.trim()) {
+      newErrors.fullName = "Full name is required";
+      isValid = false;
+    } else if (fullName.trim().length < 3) {
+      newErrors.fullName = "Full name must be at least 3 characters";
+      isValid = false;
+    }
+
+    // Billing Address validation
+    if (!billingAddress.trim()) {
+      newErrors.billingAddress = "Address is required";
+      isValid = false;
+    } else if (billingAddress.trim().length < 5) {
+      newErrors.billingAddress = "Please enter a complete address";
+      isValid = false;
+    }
+
+    // ZIP Code validation
+    const zipRegex = /^\d{6}$/;
+    if (!billingZip.trim()) {
+      newErrors.billingZip = "ZIP code is required";
+      isValid = false;
+    } else if (!zipRegex.test(billingZip)) {
+      newErrors.billingZip = "Please enter a valid 6-digit ZIP code";
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
+  const handleInputChange = (e, setter) => {
+    const { name, value } = e.target;
+    setter(value);
+    
+    // Clear error when user types
+    if (errors[name]) {
+      setErrors(prevErrors => ({
+        ...prevErrors,
+        [name]: ""
+      }));
+    }
+  };
+
   const handlePlaceOrder = async () => {
-    if (!email || !fullName || !billingAddress || !billingZip) {
-      alert("Please fill all the fields to place the order.");
+    if (!validateForm()) {
       return;
     }
 
-    if (email.length < 6 || email.indexOf("@") === -1) {
-      alert("Please enter a valid email address.");
+    if (cart.length === 0) {
+      alert("Your cart is empty. Please add items before checkout.");
       return;
     }
 
-    if (billingZip.length !== 6) {
-      alert("Please enter a valid ZIP code.");
-      return;
-    }
+    setIsProcessing(true);
+
     try {
       const orderDetails = {
         email,
@@ -64,13 +142,31 @@ const CheckoutPage = () => {
             orderDetails,
           };
 
-          await axios.post(
-            "http://localhost:9000/api/razorpay/verify-payment",
-            paymentDetails
-          );
-          clearCart();
-          alert("Payment successful and order placed!");
-          navigate("/");
+          try {
+            await axios.post(
+              "http://localhost:9000/api/razorpay/verify-payment",
+              paymentDetails
+            );
+            
+            // Prepare order details to pass to success page
+            const successOrderDetails = {
+              orderId: response.razorpay_order_id,
+              paymentId: response.razorpay_payment_id,
+              name: fullName,
+              email: email,
+              address: billingAddress + ', ' + billingZip,
+              items: cart,
+              totalPrice: finalPrice
+            };
+            
+            clearCart();
+            // Navigate to success page with order details
+            navigate("/success", { state: { orderDetails: successOrderDetails } });
+          } catch (error) {
+            console.error("Payment verification failed:", error);
+            alert("Payment verification failed. Please contact support.");
+            setIsProcessing(false);
+          }
         },
         prefill: {
           name: fullName,
@@ -79,6 +175,11 @@ const CheckoutPage = () => {
         theme: {
           color: "#3399cc",
         },
+        modal: {
+          ondismiss: function() {
+            setIsProcessing(false);
+          }
+        }
       };
 
       if (window.Razorpay) {
@@ -87,10 +188,12 @@ const CheckoutPage = () => {
       } else {
         console.error("Razorpay SDK not loaded");
         alert("Failed to load payment gateway. Please try again.");
+        setIsProcessing(false);
       }
     } catch (error) {
       console.error("Error placing order:", error);
       alert("Failed to place order. Please try again.");
+      setIsProcessing(false);
     }
   };
 
@@ -103,13 +206,13 @@ const CheckoutPage = () => {
             Check your items. And select a suitable shipping method.
           </p>
           <div className="mt-8 space-y-3 rounded-lg border bg-white px-2 py-4 sm:px-6">
-            {cart.map((curElem) => {
-              return (
-                <div className="flex flex-col rounded-lg bg-white sm:flex-row">
+            {cart.length > 0 ? (
+              cart.map((curElem, index) => (
+                <div key={index} className="flex flex-col rounded-lg bg-white sm:flex-row">
                   <img
                     className="m-2 h-24 w-28 rounded-md border object-cover object-center"
                     src={curElem.image}
-                    alt=""
+                    alt={curElem.name}
                   />
                   <div className="flex w-full flex-col px-4 py-4">
                     <span className="font-semibold text-lg">
@@ -120,11 +223,15 @@ const CheckoutPage = () => {
                       Qty: {curElem.amount}
                     </span>
 
-                    <p className="text-xl font-bold">${curElem.price}</p>
+                    <p className="text-xl font-bold">₹{curElem.price}</p>
                   </div>
                 </div>
-              );
-            })}
+              ))
+            ) : (
+              <div className="text-center py-4">
+                <p>Your cart is empty.</p>
+              </div>
+            )}
           </div>
         </div>
         <div className="mt-10 bg-gray-50 px-4 pt-8 lg:mt-0">
@@ -153,10 +260,10 @@ const CheckoutPage = () => {
                   type="text"
                   id="email"
                   name="email"
-                  className="w-full rounded-md border border-gray-200 px-4 py-3 pl-11 text-xl shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500"
+                  className={`w-full rounded-md border ${errors.email ? 'border-red-500' : 'border-gray-200'} px-4 py-3 pl-11 text-xl shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500`}
                   placeholder="your.email@gmail.com"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => handleInputChange(e, setEmail)}
                   required
                 />
                 <div className="pointer-events-none absolute inset-y-0 left-0 inline-flex items-center px-3">
@@ -176,8 +283,10 @@ const CheckoutPage = () => {
                   </svg>
                 </div>
               </div>
+              {errors.email && <p className="mt-1 text-red-500 text-sm">{errors.email}</p>}
+
               <label
-                htmlFor="card-holder"
+                htmlFor="fullName"
                 className="mt-4 mb-2 block text-xl font-medium"
               >
                 Full Name
@@ -185,12 +294,12 @@ const CheckoutPage = () => {
               <div className="relative">
                 <input
                   type="text"
-                  id="card-holder"
-                  name="card-holder"
-                  className="w-full rounded-md border border-gray-200 px-4 py-3 pl-11 text-xl uppercase shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500"
+                  id="fullName"
+                  name="fullName"
+                  className={`w-full rounded-md border ${errors.fullName ? 'border-red-500' : 'border-gray-200'} px-4 py-3 pl-11 text-xl shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500`}
                   placeholder="Your full name here"
                   value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
+                  onChange={(e) => handleInputChange(e, setFullName)}
                   required
                 />
                 <div className="pointer-events-none absolute inset-y-0 left-0 inline-flex items-center px-3">
@@ -210,9 +319,10 @@ const CheckoutPage = () => {
                   </svg>
                 </div>
               </div>
+              {errors.fullName && <p className="mt-1 text-red-500 text-sm">{errors.fullName}</p>}
 
               <label
-                htmlFor="billing-address"
+                htmlFor="billingAddress"
                 className="mt-4 mb-2 block text-xl font-medium"
               >
                 Billing Address
@@ -221,28 +331,57 @@ const CheckoutPage = () => {
                 <div className="relative flex-shrink-0 sm:w-7/12">
                   <input
                     type="text"
-                    id="billing-address"
-                    name="billing-address"
-                    className="w-full rounded-md border border-gray-200 px-4 py-3 pl-11 text-xl shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500"
+                    id="billingAddress"
+                    name="billingAddress"
+                    className={`w-full rounded-md border ${errors.billingAddress ? 'border-red-500' : 'border-gray-200'} px-4 py-3 pl-11 text-xl shadow-sm outline-none focus:z-10 focus:border-blue-500 focus:ring-blue-500`}
                     placeholder="Street Address"
                     value={billingAddress}
-                    onChange={(e) => setBillingAddress(e.target.value)}
+                    onChange={(e) => handleInputChange(e, setBillingAddress)}
                     required
                   />
                   <div className="pointer-events-none absolute inset-y-0 left-0 inline-flex items-center px-3">
-                    <img className="h-4 w-4 object-contain" alt="" />
+                    <svg 
+                      xmlns="http://www.w3.org/2000/svg" 
+                      className="h-4 w-4 text-gray-400" 
+                      fill="none" 
+                      viewBox="0 0 24 24" 
+                      stroke="currentColor"
+                    >
+                      <path 
+                        strokeLinecap="round" 
+                        strokeLinejoin="round" 
+                        strokeWidth="2" 
+                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" 
+                      />
+                      <path 
+                        strokeLinecap="round" 
+                        strokeLinejoin="round" 
+                        strokeWidth="2" 
+                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" 
+                      />
+                    </svg>
                   </div>
                 </div>
 
                 <input
                   type="text"
-                  name="billing-zip"
-                  className="flex-shrink-0 rounded-md border border-gray-200 px-4 py-3 text-xl shadow-sm outline-none sm:w-1/6 focus:z-10 focus:border-blue-500 focus:ring-blue-500"
+                  name="billingZip"
+                  id="billingZip"
+                  className={`flex-shrink-0 rounded-md border ${errors.billingZip ? 'border-red-500' : 'border-gray-200'} px-4 py-3 text-xl shadow-sm outline-none sm:w-1/6 focus:z-10 focus:border-blue-500 focus:ring-blue-500`}
                   placeholder="ZIP"
                   value={billingZip}
-                  onChange={(e) => setBillingZip(e.target.value)}
+                  onChange={(e) => handleInputChange(e, setBillingZip)}
                   required
+                  maxLength={6}
                 />
+              </div>
+              <div className="flex flex-col sm:flex-row mt-1">
+                <div className="sm:w-7/12">
+                  {errors.billingAddress && <p className="text-red-500 text-sm">{errors.billingAddress}</p>}
+                </div>
+                <div className="sm:w-1/6 sm:ml-auto">
+                  {errors.billingZip && <p className="text-red-500 text-sm">{errors.billingZip}</p>}
+                </div>
               </div>
 
               <div className="mt-6 border-t border-b py-2">
@@ -254,7 +393,7 @@ const CheckoutPage = () => {
                 </div>
                 <div className="flex items-center justify-between">
                   <p className="text-xl font-medium text-gray-900">Shipping</p>
-                  <p className="font-semibold text-gray-900">₹199.00</p>
+                  <p className="font-semibold text-gray-900">₹99.00</p>
                 </div>
               </div>
               <div className="mt-6 flex items-center justify-between">
@@ -264,10 +403,11 @@ const CheckoutPage = () => {
                 </p>
               </div>
               <button
-                className="mt-4 mb-8 w-full rounded-md bg-gray-900 px-6 py-3 font-medium text-white"
+                className={`mt-4 mb-8 w-full rounded-md ${isProcessing ? 'bg-gray-600' : 'bg-gray-900 hover:bg-gray-800'} px-6 py-3 font-medium text-white transition-colors`}
                 onClick={handlePlaceOrder}
+                disabled={isProcessing || cart.length === 0}
               >
-                Place Order
+                {isProcessing ? 'Processing...' : 'Place Order'}
               </button>
             </div>
           )}

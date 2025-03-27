@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { useAuth0 } from "@auth0/auth0-react";
+import { useUser } from "@clerk/clerk-react";
 import axios from "axios";
 
 // Move styled-component outside the function to prevent re-renders
@@ -61,6 +61,24 @@ const Wrapper = styled.section`
           font-size: 1.6rem;
         }
 
+        .error-message {
+          color: #e74c3c;
+          font-size: 1.4rem;
+          text-align: left;
+          margin-top: -1rem;
+        }
+
+        .input-container {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+          position: relative;
+        }
+
+        input.error, textarea.error {
+          border: 1px solid #e74c3c;
+        }
+
         input[type="submit"] {
           cursor: pointer;
           transition: all 0.2s;
@@ -78,26 +96,108 @@ const Wrapper = styled.section`
 `;
 
 const Contact = () => {
-  const { isAuthenticated, user } = useAuth0();
+  const { isSignedIn, user } = useUser();
   const [formData, setFormData] = useState({
-    username: "",
-    email: isAuthenticated ? user.email : "",
+    email: "",
     phone: "",
     message: "",
   });
 
+  const [errors, setErrors] = useState({
+    email: "",
+    phone: "",
+    message: "",
+  });
+
+  const [formSubmitted, setFormSubmitted] = useState(false);
+
+  // Set email when user is signed in
+  useEffect(() => {
+    if (isSignedIn && user && user.primaryEmailAddress) {
+      setFormData(prevData => ({
+        ...prevData,
+        email: user.primaryEmailAddress.emailAddress || ""
+      }));
+    }
+  }, [isSignedIn, user]);
+
+  const validateForm = () => {
+    let isValid = true;
+    const newErrors = {
+      email: "",
+      phone: "",
+      message: "",
+    };
+
+    // Email validation
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+      isValid = false;
+    } else if (!emailRegex.test(formData.email)) {
+      newErrors.email = "Please enter a valid email address";
+      isValid = false;
+    }
+
+    // Phone validation
+    const phoneRegex = /^\d{10}$/;
+    if (!formData.phone.trim()) {
+      newErrors.phone = "Phone number is required";
+      isValid = false;
+    } else if (!phoneRegex.test(formData.phone)) {
+      newErrors.phone = "Please enter a valid 10-digit phone number";
+      isValid = false;
+    }
+
+    // Message validation
+    if (!formData.message.trim()) {
+      newErrors.message = "Message is required";
+      isValid = false;
+    } else if (formData.message.trim().length < 10) {
+      newErrors.message = "Message must be at least 10 characters";
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors({
+        ...errors,
+        [name]: "",
+      });
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+
+    setFormSubmitted(true);
+    
     try {
       await axios.post("http://localhost:9000/api/contact/send-email", formData);
       alert("Email sent successfully!");
+      // Reset form after successful submission
+      setFormData({
+        email: isSignedIn && user?.primaryEmailAddress ? user.primaryEmailAddress.emailAddress : "",
+        phone: "",
+        message: "",
+      });
+      setFormSubmitted(false);
     } catch (error) {
       console.error("Error sending email:", error);
-      alert("Failed to send email.");
+      alert("Failed to send email. Please try again later.");
+      setFormSubmitted(false);
     }
   };
 
@@ -122,43 +222,52 @@ const Contact = () => {
       <div className="container">
         <div className="contact-form">
           <form onSubmit={handleSubmit} className="contact-inputs">
-            <input
-              type="text"
-              placeholder="Username"
-              name="username"
-              value={formData.username}
-              onChange={handleChange}
-              required
-              autoComplete="off"
+            <div className="input-container">
+              <input
+                type="email"
+                placeholder="Email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                className={errors.email ? "error" : ""}
+                autoComplete="off"
+              />
+              {errors.email && <div className="error-message">{errors.email}</div>}
+            </div>
+
+            <div className="input-container">
+              <input
+                type="text"
+                placeholder="Phone (10 digits)"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                className={errors.phone ? "error" : ""}
+                autoComplete="off"
+              />
+              {errors.phone && <div className="error-message">{errors.phone}</div>}
+            </div>
+
+            <div className="input-container">
+              <textarea
+                name="message"
+                cols="30"
+                rows="10"
+                placeholder="Your message"
+                value={formData.message}
+                onChange={handleChange}
+                className={errors.message ? "error" : ""}
+              ></textarea>
+              {errors.message && <div className="error-message">{errors.message}</div>}
+            </div>
+
+            <input 
+              type="submit" 
+              value={formSubmitted ? "Submitting..." : "Submit"} 
+              name="submit" 
+              id="submit-btn" 
+              disabled={formSubmitted}
             />
-            <input
-              type="email"
-              placeholder="Email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-              autoComplete="off"
-            />
-            <input
-              type="text"
-              placeholder="Phone"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              required
-              autoComplete="off"
-            />
-            <textarea
-              name="message"
-              cols="30"
-              rows="10"
-              placeholder="Your message"
-              value={formData.message}
-              onChange={handleChange}
-              required
-            ></textarea>
-            <input type="submit" value="Submit" name="submit" id="submit-btn" />
           </form>
         </div>
       </div>
