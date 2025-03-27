@@ -14,6 +14,8 @@ import Footer from "./components/Footer";
 import CheckoutPage from "./CheckoutPage";
 import Success from "./Success";
 import Profile from "./Profile";
+import ScrollToTop from "./components/ScrollToTop";
+import ChatBot from "./components/ChatBot";
 
 const App = () => {
   const theme = {
@@ -44,6 +46,7 @@ const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <Router>
+        <ScrollToTop />
         <GlobalStyle />
         <Header />
         <Routes>
@@ -59,6 +62,7 @@ const App = () => {
           <Route path="*" element={<ErrorPage />} />
         </Routes>
         <Footer />
+        <ChatBot />
       </Router>
     </ThemeProvider>
   );
